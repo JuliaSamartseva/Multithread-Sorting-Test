@@ -19,9 +19,9 @@ class QuickSort : public SortingStrategy
 
 };
 
-class MergeSort : public SortingStrategy
+class MergeSort 
 {
-    void sort(std::vector<int>& list) override;
+protected:
     void mergeSort(std::vector<int>& list, int left, int right);
     void merge(std::vector<int>& list, int left, int middle, int right);
 };
@@ -38,6 +38,19 @@ class SelectionSort : public SortingStrategy
 
 class CocktailSort : public SortingStrategy
 {
+    void sort(std::vector<int>& list) override;
+};
+
+class MultithreadMergeSort : public SortingStrategy, public MergeSort
+{
+public:
+    void sort(std::vector<int>& list) override;
+    void findParts(int part, std::vector<int>& list);
+};
+
+class SequentialMergeSort : public SortingStrategy, public MergeSort
+{
+public:
     void sort(std::vector<int>& list) override;
 };
 

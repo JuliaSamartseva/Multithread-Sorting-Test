@@ -1,4 +1,12 @@
 #include "SortingAlgorithms.h"
+#include <thread>
+#include <iostream>
+#include <utility>
+#include <thread>
+#include <chrono>
+#include <functional>
+#include <atomic>
+
 
 void swap(int* a, int* b);
 
@@ -36,7 +44,7 @@ void QuickSort::quickSort(std::vector<int>& list, int low, int high)
 }
 
 
-void MergeSort::sort(std::vector<int>& list)
+void SequentialMergeSort::sort(std::vector<int>& list)
 {
     mergeSort(list, 0, list.size() - 1);
 }
@@ -165,9 +173,42 @@ void CocktailSort::sort(std::vector<int>& list)
     }
 }
 
+void MultithreadMergeSort::sort(std::vector<int>& list)
+{
+    //number of threads used
+    unsigned int n = 4;
+    std::vector<std::thread> threads;
+
+    //creating threads for use
+    for (int i = 0; i < n; i++)
+        threads.push_back(std::thread(&MultithreadMergeSort::findParts, this, i, std::ref(list)));
+
+    for (int i = 0; i < n; i++)
+        threads[i].join();
+
+    merge(list, 0, (list.size() / 2 - 1) / 2, list.size() / 2 - 1);
+    merge(list, list.size() / 2, list.size() / 2 + (list.size() - 1 - list.size() / 2) / 2, list.size() - 1);
+    merge(list, 0, (list.size() - 1) / 2, list.size() - 1);
+}
+
+void MultithreadMergeSort::findParts(int part, std::vector<int>& list)
+{
+    // calculating low and high 
+    int low = part * (list.size() / 4);
+    int high = (part + 1) * (list.size() / 4) - 1;
+
+    // evaluating mid point 
+    int mid = low + (high - low) / 2;
+    if (low < high) {
+        mergeSort(list, low, mid);
+        mergeSort(list, mid + 1, high);
+    }
+}
+
 void swap(int* a, int* b)
 {
     int t = *a;
     *a = *b;
     *b = t;
 }
+
