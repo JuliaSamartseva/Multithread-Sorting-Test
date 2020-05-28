@@ -68,7 +68,9 @@ void MergeSort::merge(std::vector<int>& list, int left, int middle, int right)
     int n1 = middle - left + 1;
     int n2 = right - middle;
     std::vector<int>Left;
+    Left.reserve(n1);
     std::vector<int>Right;
+    Right.reserve(n2);
 
     for (int i = 0; i < n1; i++)
         Left.push_back(list[left + i]);
@@ -197,12 +199,8 @@ void MultithreadMergeSort::findParts(int part, std::vector<int>& list)
     int low = part * (list.size() / 4);
     int high = (part + 1) * (list.size() / 4) - 1;
 
-    // evaluating mid point 
-    int mid = low + (high - low) / 2;
-    if (low < high) {
-        mergeSort(list, low, mid);
-        mergeSort(list, mid + 1, high);
-    }
+    mergeSort(list, low, high);
+  
 }
 
 void swap(int* a, int* b)
