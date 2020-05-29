@@ -12,11 +12,16 @@ public:
     virtual ~SortingStrategy() = 0;
 };
 
-class QuickSort : public SortingStrategy
+class SequentialQuickSort : public SortingStrategy
 {
     void sort(std::vector<int>& list) override;
     void quickSort(std::vector<int>& list, int low, int high);
-
+};
+class MultithreadQuickSort : public SortingStrategy
+{
+public:
+    void sort(std::vector<int>& list) override;
+    void quickSort(std::vector<int>& list, int low, int high);
 };
 
 class MergeSort 
@@ -53,6 +58,8 @@ class SequentialMergeSort : public SortingStrategy, public MergeSort
 public:
     void sort(std::vector<int>& list) override;
 };
+
+
 
 class SortingContext
 {

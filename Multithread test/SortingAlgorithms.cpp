@@ -12,12 +12,12 @@ void swap(int* a, int* b);
 
 SortingStrategy::~SortingStrategy() {};
 
-void QuickSort::sort(std::vector<int>& list)
+void SequentialQuickSort::sort(std::vector<int>& list)
 {
     quickSort(list, 0, list.size() - 1);
 }
 
-void QuickSort::quickSort(std::vector<int>& list, int low, int high)
+void SequentialQuickSort::quickSort(std::vector<int>& list, int low, int high)
 {
 
     int i = low;
@@ -41,6 +41,7 @@ void QuickSort::quickSort(std::vector<int>& list, int low, int high)
         quickSort(list, low, j);
     if (i < high)
         quickSort(list, i, high);
+
 }
 
 
@@ -210,3 +211,42 @@ void swap(int* a, int* b)
     *b = t;
 }
 
+void MultithreadQuickSort::sort(std::vector<int>& list)
+{
+    quickSort(list, 0, list.size() - 1);
+}
+
+void MultithreadQuickSort::quickSort(std::vector<int>& list, int low, int high)
+{
+    int i = low;
+    int j = high;
+    int pivot = list[(i + j) / 2];
+
+    //partition
+    while (i <= j)
+    {
+        while (list[i] < pivot)
+            i++;
+        while (list[j] > pivot)
+            j--;
+        if (i <= j)
+        {
+            swap(&list[i], &list[j]);
+            i++;
+            j--;
+        }
+    }
+    if (j > low) {
+        std::thread lThread(&MultithreadQuickSort::quickSort, this, std::ref(list), low, j);
+        lThread.join();
+    }
+       
+
+    if (i < high) {
+        std::thread rThread(&MultithreadQuickSort::quickSort, this, std::ref(list), i, high);
+        rThread.join();
+    }
+        
+
+   
+}
