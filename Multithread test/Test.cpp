@@ -28,6 +28,7 @@ BOOST_AUTO_TEST_CASE(check_sorting)
 BOOST_AUTO_TEST_CASE(check_same_results)
 {
     std::cout << "From this test case we can see that the 4 threads merge sort duration is\non average 2 times faster than sequential one";
+    std::cout << "\nAt the end of each test for the array size I check whether the arrays are the same (in sorted order)";
     int array_size = 32;
     for (int i = 0; i < 8; i++) {
         
@@ -56,5 +57,41 @@ BOOST_AUTO_TEST_CASE(check_same_results)
         BOOST_CHECK(x == y);
     }
     
+}
+
+BOOST_AUTO_TEST_CASE(library_check)
+{
+    std::cout << "\n\nSTD C++17 Library check\n";
+
+    int array_size = 32;
+    for (int i = 0; i < 8; i++) {
+        std::vector<int> x = generateArray(array_size);
+        std::vector<int> y = x;
+        std::vector<int> z = x;
+
+        std::cout << "\n--------------------------------" << "Array size: " << array_size << std::endl;
+
+        auto t1_thread = std::chrono::high_resolution_clock::now();
+        std::sort(std::execution::par, y.begin(), y.end());
+        auto t2_thread = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2_thread - t1_thread).count();
+        std::cout << "Parallel sort duration: " << duration << std::endl;
+
+        t1_thread = std::chrono::high_resolution_clock::now();
+        std::sort(std::execution::par_unseq, z.begin(), z.end());
+        t2_thread = std::chrono::high_resolution_clock::now();
+        duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2_thread - t1_thread).count();
+        std::cout << "Parallel and vectorized sort duration: " << duration << std::endl;
+
+        auto t1_sequential = std::chrono::high_resolution_clock::now();
+        std::sort(std::execution::seq, x.begin(), x.end());
+        auto t2_sequential = std::chrono::high_resolution_clock::now();
+        auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(t2_sequential - t1_sequential).count();
+        std::cout << "Sequential sort duration: " << duration2 << std::endl;
+
+        array_size *= 4;
+
+        BOOST_CHECK(x == y && y == z);
+    }
 }
 
