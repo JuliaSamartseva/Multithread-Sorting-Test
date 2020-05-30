@@ -85,10 +85,10 @@ BOOST_AUTO_TEST_CASE(check_multithread_quicksort)
 BOOST_AUTO_TEST_CASE(check_same_results_quicksort)
 {
     std::cout << "===================================================================\n";
-    std::cout << "From this test case we can see that the 4 threads merge sort duration is\non average 2 times faster than sequential one on my computer";
-    std::cout << "\nAt the end of each test for the array size I check whether the arrays are the same (in sorted order)";
+    std::cout << "Running quickSort on multiple threads";
+    std::cout << "\nAt the end of each test for the certain array size I check whether the arrays are the same (in sorted order)";
     int array_size = 32;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 3; i++) {
 
         std::vector<int> x = generateArray(array_size);
         std::vector<int> y = x;
@@ -96,14 +96,14 @@ BOOST_AUTO_TEST_CASE(check_same_results_quicksort)
 
         std::cout << "\n--------------------------------" << "Array size: " << array_size << std::endl;
 
-        context.setStrategy(new MultithreadMergeSort());
+        context.setStrategy(new MultithreadQuickSort());
         auto t1_thread = std::chrono::high_resolution_clock::now();
         context.sortNumbers(x);
         auto t2_thread = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2_thread - t1_thread).count();
-        std::cout << "Merge sort multithread duration: " << duration << std::endl;
+        std::cout << "Quick sort multithread duration: " << duration << std::endl;
 
-        context.setStrategy(new SequentialMergeSort());
+        context.setStrategy(new SequentialQuickSort());
         auto t1_sequential = std::chrono::high_resolution_clock::now();
         context.sortNumbers(y);
         auto t2_sequential = std::chrono::high_resolution_clock::now();
